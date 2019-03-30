@@ -109,6 +109,12 @@ app.get('/callback', function(req, res) {
           json: true
         };
 
+        var songInfo = {
+          url: 'https://api.spotify.com/v1/audio-features/06AKEBrKUckW0KREUWRnvT',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
         spotifyApi.setAccessToken(access_token);
 
         spotifyApi.getUserPlaylists(body.id)
@@ -118,8 +124,8 @@ app.get('/callback', function(req, res) {
             for (i in bodyid.items) {
               x += bodyid.items[i].id + "<br>";
             }
-            console.log('the playlists are', bodyid);
-            console.log('the playlists are', x);
+            // console.log('the playlists are', bodyid);
+            // console.log('the playlists are', x);
             res.redirect('/#' +
               querystring.stringify({
               access_token: access_token,
@@ -133,6 +139,11 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           //console.log(body);
+        });
+
+
+        request.get(songInfo, function(error, response, body) {
+          console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
