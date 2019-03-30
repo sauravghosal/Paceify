@@ -133,7 +133,7 @@ app.get('/callback', function(req, res) {
           return songData;
         }
 
-        var getPlaylistInfo = function(playlistId) {
+        var getPlaylistInfo = function(callback, playlistId) {
           var playlistData;
           var idArray = [];
           var playlistInfo = {
@@ -145,13 +145,17 @@ app.get('/callback', function(req, res) {
           request.get(playlistInfo, function(error, response, body) {
               console.log("playlists below")
               //playlistData = ;
-              //console.log(playlistData);
               for (var song in body.items) {
-                idArray.push(body.items[song].track)
+                console.log(body.items[song].track.id);
+                idArray.push(body.items[song].track.id);
               }
+              callback(idArray);
           });
 
           return idArray;
+        }
+        function processResponse( response ) {
+          console.log(response);
         }
 
         spotifyApi.setAccessToken(access_token);
@@ -163,7 +167,7 @@ app.get('/callback', function(req, res) {
             for (var i in bodyid.items) {
               console.log("bodyitems below")
               console.log(bodyid.items[i].id); //playlist id
-              songArray.push(getPlaylistInfo(bodyid.items[i].id));
+              songArray.push(getPlaylistInfo(processResponse, bodyid.items[i].id));
             }
             console.log("Song array below")
             console.log(songArray);
