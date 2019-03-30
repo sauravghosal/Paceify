@@ -17,6 +17,16 @@ var client_id = '0477d3965d80465cbd1f02b376260cbc'; // Your client id
 var client_secret = '4dcdc5ec2507404c847f1d6e6241d298'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
+var SpotifyWebApi = require('spotify-web-api-node');
+
+// credentials are optional
+var spotifyApi = new SpotifyWebApi({
+  clientId: '0477d3965d80465cbd1f02b376260cbc',
+  clientSecret: '4dcdc5ec2507404c847f1d6e6241d298',
+  redirectUri: 'http://localhost:8888/callback'
+});
+
+
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -98,9 +108,18 @@ app.get('/callback', function(req, res) {
           json: true
         };
 
+        spotifyApi.setAccessToken(access_token);
+
+        spotifyApi.getUserPlaylists(body.id)
+          .then(function(data) {
+            console.log('Retrieved playlists', data.body);
+          },function(err) {
+            console.log('Something went wrong!', err);
+          });
+
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
