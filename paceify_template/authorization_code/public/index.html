@@ -46,6 +46,8 @@
             <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
             <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
             <dt>Country</dt><dd>{{country}}</dd>
+            <dt>Items</dt><dd>{{items}}</dd>
+            <dt>Total</dt><dd>{{total}}</dd>
           </dl>
         </div>
       </div>
@@ -74,6 +76,7 @@
               q = window.location.hash.substring(1);
           while ( e = r.exec(q)) {
              hashParams[e[1]] = decodeURIComponent(e[2]);
+             alert(decodeURIComponent(e[2]));
           }
           return hashParams;
         }
@@ -90,7 +93,9 @@
 
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
+            body = params.bodyid,
             error = params.error;
+        alert(params.bodyid);
 
         if (error) {
           alert('There was an error during the authentication');
@@ -99,7 +104,8 @@
             // render oauth info
             oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
-              refresh_token: refresh_token
+              refresh_token: refresh_token,
+              body: body
             });
 
             $.ajax({
@@ -108,12 +114,12 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                 userProfilePlaceholder.innerHTML = body;
                   $('#login').hide();
                   $('#loggedin').show();
                 }
             });
+
           } else {
               // render initial screen
               $('#login').show();

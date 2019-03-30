@@ -96,11 +96,12 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
-    request.post(authOptions, function(error, response, body) {
+    request.post(authOptions, function(error, response, body, data) {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+            refresh_token = body.refresh_token,
+            bodyid = '';
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
@@ -112,7 +113,8 @@ app.get('/callback', function(req, res) {
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
-            console.log('Retrieved playlists', data.body);
+            bodyid = data.body;
+            console.log('the playlists are', bodyid);
           },function(err) {
             console.log('Something went wrong!', err);
           });
@@ -126,8 +128,9 @@ app.get('/callback', function(req, res) {
         res.redirect('/#' +
           querystring.stringify({
             access_token: access_token,
-            refresh_token: refresh_token
-          }));
+            refresh_token: refresh_token,
+            bodyid: bodyid
+        }));
       } else {
         res.redirect('/#' +
           querystring.stringify({
