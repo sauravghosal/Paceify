@@ -58,6 +58,8 @@
       <dl class="dl-horizontal">
         <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
         <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+        <dt>Body token</dt><dd>{{body_token}}</dd>
+
       </dl>
     </script>
 
@@ -76,7 +78,6 @@
               q = window.location.hash.substring(1);
           while ( e = r.exec(q)) {
              hashParams[e[1]] = decodeURIComponent(e[2]);
-             alert(decodeURIComponent(e[2]));
           }
           return hashParams;
         }
@@ -95,7 +96,6 @@
             refresh_token = params.refresh_token,
             body = params.bodyid,
             error = params.error;
-        alert(params.bodyid);
 
         if (error) {
           alert('There was an error during the authentication');
@@ -105,7 +105,7 @@
             oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
               refresh_token: refresh_token,
-              body: body
+              body_token: body
             });
 
             $.ajax({
@@ -136,7 +136,8 @@
               access_token = data.access_token;
               oauthPlaceholder.innerHTML = oauthTemplate({
                 access_token: access_token,
-                refresh_token: refresh_token
+                refresh_token: refresh_token,
+                body_token: body
               });
             });
           }, false);

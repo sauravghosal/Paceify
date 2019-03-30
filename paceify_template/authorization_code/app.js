@@ -101,7 +101,7 @@ app.get('/callback', function(req, res) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token,
-            bodyid = '';
+            bodyid = 'heyyyy';
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
@@ -113,8 +113,19 @@ app.get('/callback', function(req, res) {
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
+            var i, x = "";
             bodyid = data.body;
+            for (i in bodyid.items) {
+              x += bodyid.items[i].id + "<br>";
+            }
             console.log('the playlists are', bodyid);
+            console.log('the playlists are', x);
+            res.redirect('/#' +
+              querystring.stringify({
+              access_token: access_token,
+              refresh_token: refresh_token,
+              bodyid: bodyid
+            }));
           },function(err) {
             console.log('Something went wrong!', err);
           });
@@ -125,12 +136,7 @@ app.get('/callback', function(req, res) {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token,
-            bodyid: bodyid
-        }));
+
       } else {
         res.redirect('/#' +
           querystring.stringify({
