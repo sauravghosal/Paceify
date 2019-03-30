@@ -96,7 +96,7 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
-    request.post(authOptions, function(error, response, body, data) {
+    request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
@@ -135,6 +135,7 @@ app.get('/callback', function(req, res) {
 
         var getPlaylistInfo = function(playlistId) {
           var playlistData;
+          var idArray = [];
           var playlistInfo = {
                      url: 'https://api.spotify.com/v1/playlists/' + playlistId + '/tracks',
                      headers: { 'Authorization': 'Bearer ' + access_token },
@@ -142,44 +143,29 @@ app.get('/callback', function(req, res) {
           };
 
           request.get(playlistInfo, function(error, response, body) {
-              console.log(body);
-              playlistData = body.track;
-              var idArray = [];
-              //array of song jsons
-              for (var song in playlistData) {
-                idArray.push(song.track.artists)
+              console.log("playlists below")
+              //playlistData = ;
+              //console.log(playlistData);
+              for (var song in body.items) {
+                idArray.push(body.items[song].track)
               }
           });
 
-          return playlistData;
+          return idArray;
         }
 
         spotifyApi.setAccessToken(access_token);
-
-        // var getPlaylistInfo = function(username, playlistId) {
-        //   var playlistData;
-        //    // Get tracks in a playlist
-        //    console.log(username)
-        //    spotifyApi.getPlaylistTracks(username, playlistId)
-        //      .then(
-        //        function(data) {
-        //           playlistData = data.body;
-        //        },
-        //        function(err) {
-        //          console.log('Something went wrong!', err);
-        //        }
-        //      );
-        //      return playlistData;
-        // }
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
             bodyid = data.body;
             var songArray = [];
             for (var i in bodyid.items) {
+              console.log("bodyitems below")
               console.log(bodyid.items[i].id); //playlist id
               songArray.push(getPlaylistInfo(bodyid.items[i].id));
             }
+            console.log("Song array below")
             console.log(songArray);
             res.redirect('/#' +
               querystring.stringify({
