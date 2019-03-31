@@ -167,17 +167,17 @@ app.get('/callback', function(req, res) {
         // function processResponse( response ) {
         //   console.log(response);
         // }
+        var playlistJSON = {}; //JSON for a particular playlist
 
         spotifyApi.setAccessToken(access_token);
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
             bodyid = data.body.items; //playlists
-            var playlistJSON = {}; //JSON for a particular playlist
             for (var i = 0; i < bodyid.length; i++) { //iterating over playlists
               playlistJSON[bodyid[i].name] = bodyid[i].id; //JSON with names as keys and ids as values
              }
-             console.log(playlistJSON);
+             //console.log(playlistJSON);
              //console.log(songArray);
               //getPlaylistInfo(bodyid.items[0].id) //gets all songs from a playlist
               //   .then(function itworks(response) {
@@ -195,11 +195,16 @@ app.get('/callback', function(req, res) {
               //   .catch(function doesntwork(err) {
               //       console.error(err)
               //   })
+              console.log(playlistJSON)
+              res.redirect('/#' +
+                querystring.stringify({
+                access_token: access_token,
+                refresh_token: refresh_token,
+                bodyid: playlistJSON.Khalid
+              }));
           },function(err) {
             console.log('Something went wrong!', err);
           });
-
-
 
 
 
