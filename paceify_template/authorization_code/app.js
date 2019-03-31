@@ -118,7 +118,7 @@ app.get('/callback', function(req, res) {
         //yayy!
         var getSongInfo = function(songId) {
           var songData;
-          console.log(songId);
+          // console.log(songId);
           var songInfo = {
             url: 'https://api.spotify.com/v1/audio-features/' + songId,
             headers: { 'Authorization': 'Bearer ' + access_token },
@@ -126,57 +126,75 @@ app.get('/callback', function(req, res) {
           };
 
           request.get(songInfo, function(error, response, body) {
-              console.log(body);
+              // console.log(body);
               songData = body;
           });
 
           return songData;
         }
 
-        var getPlaylistInfo = function(callback, playlistId) {
+        var getPlaylistInfo = function(playlistId) {
           var playlistData;
-          var idArray = [];
           var playlistInfo = {
                      url: 'https://api.spotify.com/v1/playlists/' + playlistId + '/tracks',
                      headers: { 'Authorization': 'Bearer ' + access_token },
                      json: true
           };
 
-          request.get(playlistInfo, function(error, response, body) {
-              console.log("playlists below")
-              //playlistData = ;
-              for (var song in body.items) {
-                console.log(body.items[song].track.id);
-                idArray.push(body.items[song].track.id);
-              }
-              callback(idArray);
-          });
-
-          return idArray;
+          return new Promise(
+              (resolve, reject) => {
+                request.get(playlistInfo, function(error, response, body){
+                  if (error) reject(error);
+                  let idArray = [];
+                  for (var song in body.items) {
+                    idArray.push(body.items[song].track.id);
+                  }
+                  let items = body.items; //array of item objects
+                  resolve(idArray);
+                });
+            }
+          );
         }
-        function processResponse( response ) {
-          console.log(response);
-        }
+          // request.get(playlistInfo, function(error, response, body) {
+          //     console.log("playlists below")
+          //     //playlistData = ;
+          //     for (var song in body.items) {
+          //       console.log(body.items[song].track.id);
+          //       idArray.push(body.items[song].track.id);
+          //     }
+          //     callback(idArray);
+          // });
+        // function processResponse( response ) {
+        //   console.log(response);
+        // }
 
         spotifyApi.setAccessToken(access_token);
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
-            bodyid = data.body;
-            var songArray = [];
-            for (var i in bodyid.items) {
-              console.log("bodyitems below")
-              console.log(bodyid.items[i].id); //playlist id
-              songArray.push(getPlaylistInfo(processResponse, bodyid.items[i].id));
-            }
-            console.log("Song array below")
-            console.log(songArray);
-            res.redirect('/#' +
-              querystring.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token,
-              bodyid: bodyid
-            }));
+            bodyid = data.body.items; //playlists
+            var playlistJSON = {}; //JSON for a particular playlist
+            for (var i = 0; i < bodyid.length; i++) { //iterating over playlists
+              playlistJSON[bodyid[i].name] = bodyid[i].id; //JSON with names as keys and ids as values
+             }
+             console.log(playlistJSON);
+             //console.log(songArray);
+              //getPlaylistInfo(bodyid.items[0].id) //gets all songs from a playlist
+              //   .then(function itworks(response) {
+              //     songArray.push(response) //adds all song ids to songArray
+              //     console.log('song array');
+              //     console.log(songArray);
+
+              //     res.redirect('/#' +
+              //       querystring.stringify({
+              //       access_token: access_token,
+              //       refresh_token: refresh_token,
+              //       bodyid: bodyid
+              //     }));
+              //   })
+              //   .catch(function doesntwork(err) {
+              //       console.error(err)
+              //   })
           },function(err) {
             console.log('Something went wrong!', err);
           });
