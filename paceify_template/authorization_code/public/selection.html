@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Paceify</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+    	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <head>
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main">
+						<hr />
+						<h2>Chose Playlist</h2>
+						<form method="post" action="#">
+							<div class="fields">
+								<!-- <div class="field">
+									<input type="text" name="title" id="title" placeholder="Title" />
+								</div> -->
+								<div class="field">
+									<select name="playlist" id="playlist">
+										<option value="">Playlist</option>
+										<option value="sales">Playlist 1</option>
+										<option value="tech">Playlist 2</option>
+										<option value="null">Playlist 3</option>
+									</select>
+								</div>
+								<div class="field">
+									<input type="text" name="bpm" id="bpm" placeholder="BPM (Optional)" />
+								</div>
+							</div>
+							<ul class="actions special">
+								<li><a href="output.html" class="button" onClick="window.location='http://output.html?var=<?php echo $inputBPM ?>'" >Organize!</a></li>
+							</ul>
+						</form>
+						<hr />
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<ul class="copyright">
+			              <li>&copy; Cowboi Coderz</li></li>
+						</ul>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script>
+				if ('addEventListener' in window) {
+					window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-preload\b/, ''); });
+					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+				}
+				var inputBPM = document.getElementById(bpm).innerHTML;
+				var enteredBPM;
+				if (inputBPM.equals("")) {
+					enteredBPM = false;
+				}
+			</script>
+
+	</body>
+</html>

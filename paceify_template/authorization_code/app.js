@@ -108,26 +108,85 @@ app.get('/callback', function(req, res) {
           json: true
         };
 
+        var username;
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+          username = body.name;
+        });
+
+        //yayy!
+        var getSongInfo = function(songId) {
+          var songData;
+          console.log(songId);
+          var songInfo = {
+            url: 'https://api.spotify.com/v1/audio-features/' + songId,
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            json: true
+          };
+
+          request.get(songInfo, function(error, response, body) {
+              console.log(body);
+              songData = body;
+          });
+
+          return songData;
+        }
+
+        var getPlaylistInfo = function(callback, playlistId) {
+          var playlistData;
+          var idArray = [];
+          var playlistInfo = {
+                     url: 'https://api.spotify.com/v1/playlists/' + playlistId + '/tracks',
+                     headers: { 'Authorization': 'Bearer ' + access_token },
+                     json: true
+          };
+
+          request.get(playlistInfo, function(error, response, body) {
+              console.log("playlists below")
+              //playlistData = ;
+              for (var song in body.items) {
+                console.log(body.items[song].track.id);
+                idArray.push(body.items[song].track.id);
+              }
+              callback(idArray);
+          });
+
+          return idArray;
+        }
+        function processResponse( response ) {
+          console.log(response);
+        }
+
         spotifyApi.setAccessToken(access_token);
 
         spotifyApi.getUserPlaylists(body.id)
           .then(function(data) {
-            console.log('Retrieved playlists', data.body);
+            bodyid = data.body;
+            var songArray = [];
+            for (var i in bodyid.items) {
+              console.log("bodyitems below")
+              console.log(bodyid.items[i].id); //playlist id
+              songArray.push(getPlaylistInfo(processResponse, bodyid.items[i].id));
+            }
+            console.log("Song array below")
+            console.log(songArray);
+            res.redirect('/#' +
+              querystring.stringify({
+              access_token: access_token,
+              refresh_token: refresh_token,
+              bodyid: bodyid
+            }));
           },function(err) {
             console.log('Something went wrong!', err);
           });
 
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          //console.log(body);
-        });
+
+
+
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
+
       } else {
         res.redirect('/#' +
           querystring.stringify({

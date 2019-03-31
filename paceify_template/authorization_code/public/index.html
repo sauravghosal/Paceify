@@ -22,10 +22,12 @@
               <h1>Paceify</h1>
               <p>a tool to subdivide your Spotify playlists by BMP!</p>
               <div id="login">
-                <a href="https://accounts.spotify.com/authorize?" class="btn btn-primary">Log in with Spotify</a>
+                <a href="/login" class="btn btn-primary">Log in with Spotify</a>
               </div>
               <div id="loggedin">
                 <div id="user-profile">
+                </div>
+                <div id="oauth">
                 </div>
             </header>
 
@@ -55,7 +57,7 @@
   <body>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
+      <!-- <h1>Logged in as {{display_name}}</h1>
       <div class="media">
         <div class="pull-left">
           <img class="media-object" width="150" src="{{images.0.url}}" />
@@ -69,19 +71,32 @@
             <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
             <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
             <dt>Country</dt><dd>{{country}}</dd>
+<<<<<<< HEAD
             <dt>Followers</dt><dd>{{followers.total}}
             <dt>Playlists</dt><dd>{{body}}
+=======
+            <dt>Items</dt><dd>{{items}}</dd>
+            <dt>Total</dt><dd>{{total}}</dd>
+>>>>>>> fc5fcb8bfdce46b1bc44e8ec72711dd339e8efb6
           </dl>
         </div>
+      </div> -->
+      <div id="login">
+          <a href="selection.html" class="btn btn-primary">Continue</a>
       </div>
     </script>
 
     <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
+      <!-- <h2>oAuth info</h2>
       <dl class="dl-horizontal">
         <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
         <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
-      </dl>
+        <dt>Body token</dt><dd>{{body_token}}</dd>
+
+      </dl> -->
+      <div id="login">
+          <a href="selection.html" class="btn btn-primary">Continue</a>
+      </div>
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
@@ -115,6 +130,7 @@
 
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
+            body = params.bodyid,
             error = params.error;
 
         if (error) {
@@ -124,7 +140,8 @@
             // render oauth info
             oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
-              refresh_token: refresh_token
+              refresh_token: refresh_token,
+              body_token: body
             });
 
             $.ajax({
@@ -133,12 +150,12 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                 userProfilePlaceholder.innerHTML = body;
                   $('#login').hide();
                   $('#loggedin').show();
                 }
             });
+
           } else {
               // render initial screen
               $('#login').show();
@@ -155,7 +172,8 @@
               access_token = data.access_token;
               oauthPlaceholder.innerHTML = oauthTemplate({
                 access_token: access_token,
-                refresh_token: refresh_token
+                refresh_token: refresh_token,
+                body_token: body
               });
             });
           }, false);
